@@ -1,3 +1,4 @@
+```javascript
 const request = require("supertest");
 const app = require("../../server");
 
@@ -16,7 +17,7 @@ describe("Calculator API Integration Tests", () => {
       .send({
         num1: 10,
         num2: 5,
-        operation: "+"
+        operation: "add"
       });
 
     expect(response.statusCode).toBe(200);
@@ -29,7 +30,7 @@ describe("Calculator API Integration Tests", () => {
       .send({
         num1: 10,
         num2: 5,
-        operation: "-"
+        operation: "subtract"
       });
 
     expect(response.statusCode).toBe(200);
@@ -37,3 +38,4 @@ describe("Calculator API Integration Tests", () => {
   });
 
 });
+```
