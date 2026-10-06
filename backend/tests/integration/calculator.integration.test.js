@@ -4,8 +4,7 @@ const app = require("../../server");
 describe("Calculator API Integration Tests", () => {
 
   test("GET /health should return 200", async () => {
-    const response = await request(app)
-      .get("/health");
+    const response = await request(app).get("/health");
 
     expect(response.statusCode).toBe(200);
   });
@@ -16,7 +15,7 @@ describe("Calculator API Integration Tests", () => {
       .send({
         num1: 10,
         num2: 5,
-        operation: "+"
+        operation: "add"
       });
 
     expect(response.statusCode).toBe(200);
@@ -29,7 +28,7 @@ describe("Calculator API Integration Tests", () => {
       .send({
         num1: 10,
         num2: 5,
-        operation: "-"
+        operation: "subtract"
       });
 
     expect(response.statusCode).toBe(200);
