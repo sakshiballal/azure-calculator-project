@@ -1,4 +1,3 @@
-@'
 const request = require("supertest");
 const app = require("../../server");
 
@@ -37,4 +36,3 @@ describe("Calculator API Integration Tests", () => {
   });
 
 });
-'@ | Set-Content tests\integration\calculator.integration.test.js
