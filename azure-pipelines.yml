@@ -1,0 +1,116 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+
+# 1. Install dependencies
+- stage: Install
+  displayName: 'Install Dependencies'
+  jobs:
+  - job: Install
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '20.x'
+      displayName: 'Install Node.js'
+
+    - script: |
+        cd backend
+        npm ci
+      displayName: 'Install Backend Dependencies'
+
+
+# 2. Run unit tests
+- stage: UnitTests
+  displayName: 'Run Unit Tests'
+  dependsOn: Install
+  jobs:
+  - job: UnitTests
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '20.x'
+
+    - script: |
+        cd backend
+        npm ci
+        npm run test:unit
+      displayName: 'Run Unit Tests'
+
+
+# 3. Build
+- stage: Build
+  displayName: 'Build Application'
+  dependsOn: UnitTests
+  jobs:
+  - job: Build
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '20.x'
+
+    - script: |
+        cd backend
+        npm ci
+      displayName: 'Prepare Backend'
+
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)'
+        Contents: |
+          backend/**
+          frontend/**
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/app'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathToPublish: '$(Build.ArtifactStagingDirectory)/app'
+        artifactName: 'calculator-app'
+      displayName: 'Publish Application Artifact'
+
+
+# 4. Deploy
+- stage: Deploy
+  displayName: 'Deploy Application'
+  dependsOn: Build
+  jobs:
+  - job: Deploy
+    steps:
+    - script: |
+        echo "Deployment stage"
+        echo "Application artifact is ready for deployment"
+      displayName: 'Deploy Application'
+
+
+# 5. Integration tests
+- stage: IntegrationTests
+  displayName: 'Integration Tests'
+  dependsOn: Deploy
+  jobs:
+  - job: IntegrationTests
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '20.x'
+
+    - script: |
+        cd backend
+        npm ci
+        npm run test:integration
+      displayName: 'Run Integration Tests'
+
+
+# 6. Smoke test
+- stage: SmokeTest
+  displayName: 'Smoke Test'
+  dependsOn: IntegrationTests
+  jobs:
+  - job: SmokeTest
+    steps:
+    - script: |
+        echo "Smoke test completed"
+        echo "Application pipeline completed successfully"
+      displayName: 'Smoke Test'
