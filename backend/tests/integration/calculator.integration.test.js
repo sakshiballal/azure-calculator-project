@@ -37,4 +37,3 @@ describe("Calculator API Integration Tests", () => {
   });
 
 });
-```
