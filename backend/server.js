@@ -6,6 +6,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Health check - used for smoke testing
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        status: "ok"
+    });
+});
+
 app.get("/", (req, res) => {
     res.json({
         message: "Calculator Backend is running"
@@ -50,6 +57,12 @@ app.post("/calculate", (req, res) => {
 
 const PORT = 5000;
 
-app.listen(PORT, () => {
-    console.log(`Backend running on port ${PORT}`);
-});
+// Start server
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Backend running on port ${PORT}`);
+    });
+}
+
+// Export app for testing
+module.exports = app;
